@@ -6,26 +6,18 @@ contract Storage {
     bool    booldata = true;
     address addrdata = 0xdC962cEAb6C926E3a9B133c46c7258c0E371b82b;
 
-    event Variables(
-        bytes4 _a,
-        uint72 _b,
-        bool _c,
-        address _d
-    );
-
-    function getData() public payable returns (bytes4 a,uint64 b,bool c,address d) {
-            //bytes4 a;
-            //uint72 b;
-            //bool c;
-            //address d;
+    function getData() public view returns (bytes4 a,uint64 b,bool c,address d) {
         assembly {
         // return the values of bytes4data, uintdata, booldata, addrdata
-            a := sload(bytes4data_slot)
-            b := sload(uintdata_slot)
-            c := sload(booldata_slot)
-            d := sload(addrdata_slot)
+           let loada := sload(bytes4data_slot)
+           let loadb := sload(uintdata_slot)
+           let loadc := sload(booldata_slot)
+           let loadd := sload(addrdata_slot)
+
+            a := shl(224, and(loada, 0xffffffff))
+            b := shr(shl(3, uintdata_offset), loada)
+            c := loadc
+            d := loadd
         }
-        emit Variables(a, b, c, d);
-        return(a, b, c, d);
     }
 }
